@@ -32,7 +32,8 @@ function Login({ onLogin }) {
     setSuccessMsg(null);
 
     try {
-      const response = await fetch(`http://${window.location.hostname}:5000/login`, {
+      const API_URL="https://shanmukhi1309-leaf-detection-system.hf.space"
+      const response = await fetch(`${API_URL}/login`,{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

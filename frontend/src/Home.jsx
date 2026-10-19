@@ -82,9 +82,10 @@ function Home({ user, onLogout }) {
 
     const formData = new FormData();
     formData.append('file', image);
-
     try {
-      const response = await fetch(`http://${window.location.hostname}:5000/predict`, {
+      const API_URL = "https://shanmukhi1309-leaf-detection-system.hf.space";
+
+      const response = await fetch(`${API_URL}/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -101,7 +102,7 @@ function Home({ user, onLogout }) {
         setHistory((prev) => [{...data, id: Date.now()}, ...prev]);
       }
     } catch (err) {
-      setError(err.message || 'Unable to reach the server. Is the Flask API running?');
+      setError(err.message || 'Unable to reach the server.');
     } finally {
       setLoading(false);
     }
@@ -339,3 +340,8 @@ function Home({ user, onLogout }) {
 }
 
 export default Home;
+
+
+
+
+
