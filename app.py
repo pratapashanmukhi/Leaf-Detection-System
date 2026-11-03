@@ -4,7 +4,6 @@ import io
 import sqlite3
 import numpy as np
 import tensorflow as tf
-import streamlit as st
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
@@ -14,12 +13,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Suppress TF Logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'users.db')
+MODEL_PATH = os.path.join(BASE_DIR, 'leaf_model.h5')
+
 app = Flask(__name__)
 CORS(app) # Enable CORS for React frontend
 
 # --- Initialize SQLite Database for Users ---
 def init_db():
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -49,7 +52,7 @@ def signup():
     
     conn = None
     try:
-        conn = sqlite3.connect('users.db', timeout=10)
+        conn = sqlite3.connect(DB_PATH, timeout=10)
         c = conn.cursor()
         c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, hashed_pw))
         conn.commit()
@@ -73,7 +76,7 @@ def login():
         
     conn = None
     try:
-        conn = sqlite3.connect('users.db', timeout=10)
+        conn = sqlite3.connect(DB_PATH, timeout=10)
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=?", (email,))
         user = c.fetchone()
@@ -98,7 +101,7 @@ def login():
 # Load the trained model safely
 try:
     print("Loading model...")
-    model = tf.keras.models.load_model("leaf_model.h5")
+    model = tf.keras.models.load_model(MODEL_PATH)
     print("Model loaded successfully!")
 except Exception as e:
     print(f"Error loading model: {e}")
